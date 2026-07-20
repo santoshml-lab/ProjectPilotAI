@@ -7,6 +7,57 @@ const form = document.getElementById("projectForm");
 const output = document.getElementById("output");
 
 const API_URL = "https://projectpilotlession.onrender.com/generate-project";
+// ================================
+// Save Project
+// ================================
+
+async function saveProject(project, aiResult) {
+
+    const {
+        data: { session }
+    } = await db.auth.getSession();
+
+    if (!session) return;
+
+    const { error } = await db
+        .from("projects")
+        .insert({
+
+            user_id: session.user.id,
+
+            project_name: project.project_name,
+
+            project_type: project.project_type,
+
+            frontend: project.frontend,
+
+            backend: project.backend,
+
+            database_name: project.database,
+
+            auth_type: project.auth,
+
+            deployment: project.deployment,
+
+            features: project.features,
+
+            description: project.description,
+
+            result: aiResult
+
+        });
+
+    if (error) {
+
+        console.log("Save Error:", error);
+
+    } else {
+
+        console.log("✅ Project Saved");
+
+    }
+
+}
 
 form.addEventListener("submit", async (e) => {
 
@@ -65,7 +116,13 @@ form.addEventListener("submit", async (e) => {
         output.innerHTML = `
 <pre>${result.result}</pre>
 `;
+        
+// ================================
+// Save Project History
+// ================================
 
+await saveProject(data, result.result);
+        
     } catch (err) {
 
         output.innerHTML = "❌ Failed to connect to ProjectPilot AI API.";

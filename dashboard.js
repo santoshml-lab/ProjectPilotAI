@@ -4,9 +4,9 @@
 // =====================================
 alert("Dashboard JS Loaded");
 
-console.log(window.db);
 
-console.log(supabase);
+
+
 
 // Welcome User
 const userName = localStorage.getItem("userName") || "Developer";
@@ -22,10 +22,9 @@ if (welcome) {
 // =====================================
 
 const supabase = window.db;
-if (!supabase) {
-    alert("Supabase Not Loaded");
-    throw new Error("Supabase Not Loaded");
-}
+
+    
+    
 
 // =====================================
 // New Project Button
@@ -126,7 +125,7 @@ cards.forEach((card, index) => {
 const projectHistory = document.getElementById("projectHistory");
 
 async function loadProjects() {
-    alert("loadProjects Started");
+    
 
     if (!projectHistory) return;
 

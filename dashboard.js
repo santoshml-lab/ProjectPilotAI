@@ -138,6 +138,8 @@ async function loadProjects() {
     }
 
     projectHistory.innerHTML = "";
+    console.log(data);
+    alert(data.length);
 
     if (!data || data.length === 0) {
 

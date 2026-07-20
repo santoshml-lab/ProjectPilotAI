@@ -225,3 +225,54 @@ loadProjects();
 // =====================================
 
 console.log("Dashboard Loaded Successfully 🚀");
+
+// =====================================
+// Load Project History
+// =====================================
+
+async function loadProjects() {
+
+    const {
+        data,
+        error
+    } = await db
+        .from("projects")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error) {
+
+        console.log(error);
+        return;
+
+    }
+
+    const history = document.getElementById("projectHistory");
+
+    history.innerHTML = "";
+
+    data.forEach(project => {
+
+        history.innerHTML += `
+
+<div class="project-card">
+
+<h3>${project.project_name}</h3>
+
+<p>${project.project_type}</p>
+
+<span>
+
+${new Date(project.created_at).toLocaleDateString()}
+
+</span>
+
+</div>
+
+`;
+
+    });
+
+}
+
+loadProjects();

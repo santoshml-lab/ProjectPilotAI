@@ -21,7 +21,11 @@ if (welcome) {
 // Supabase
 // =====================================
 
+alert("1");
+
 const supabase = window.db;
+
+alert("2");
 
     
     

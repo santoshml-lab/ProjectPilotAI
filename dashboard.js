@@ -13,6 +13,12 @@ if (welcome) {
 }
 
 // =====================================
+// Supabase
+// =====================================
+
+const supabase = window.db;
+
+// =====================================
 // New Project Button
 // =====================================
 
@@ -60,11 +66,13 @@ const logoutBtn = document.querySelector('a[href="login.html"]');
 
 if (logoutBtn) {
 
-    logoutBtn.addEventListener("click", (e) => {
+    logoutBtn.addEventListener("click", async (e) => {
 
         e.preventDefault();
 
         if (confirm("Do you want to logout?")) {
+
+            await supabase.auth.signOut();
 
             localStorage.clear();
 
@@ -81,7 +89,7 @@ if (logoutBtn) {
 // =====================================
 
 const cards = document.querySelectorAll(
-".action-card,.project-card,.stat-card,.tech-card,.tip-card"
+".action-card,.project-card,.stat-card,.tech-card,.tip-card,.profile-card,.activity-card"
 );
 
 cards.forEach((card, index) => {
@@ -102,44 +110,34 @@ cards.forEach((card, index) => {
 
 });
 
-// =============================
-// Dashboard.js
-// =============================
-
-const supabase = window.db;
+// =====================================
+// Project History
+// =====================================
 
 const projectHistory = document.getElementById("projectHistory");
 
-// Load Projects
 async function loadProjects() {
+
+    if (!projectHistory) return;
 
     const {
         data: { user }
     } = await supabase.auth.getUser();
 
-    if (!user) {
-
-        window.location.href = "login.html";
-        return;
-
-    }
+    if (!user) return;
 
     const { data, error } = await supabase
-
         .from("projects")
-
         .select("*")
-
         .eq("user_id", user.id)
-
         .order("created_at", { ascending: false });
 
     if (error) {
-
         console.log(error);
         return;
-
     }
+
+    projectHistory.innerHTML = "";
 
     if (!data || data.length === 0) {
 
@@ -149,11 +147,9 @@ async function loadProjects() {
             <p>Generate your first project.</p>
         </div>
         `;
+
         return;
-
     }
-
-    projectHistory.innerHTML = "";
 
     data.forEach(project => {
 
@@ -164,24 +160,16 @@ async function loadProjects() {
 
             <p>${project.project_type}</p>
 
-            <span>
-                ${new Date(project.created_at).toLocaleDateString()}
-            </span>
+            <span>${new Date(project.created_at).toLocaleDateString()}</span>
 
             <br><br>
 
-            <button class="card-btn"
-                onclick="openProject('${project.id}')">
-
+            <button class="card-btn" onclick="openProject('${project.id}')">
                 Open
-
             </button>
 
-            <button class="card-btn"
-                onclick="deleteProject('${project.id}')">
-
+            <button class="card-btn" onclick="deleteProject('${project.id}')">
                 Delete
-
             </button>
 
         </div>
@@ -191,7 +179,12 @@ async function loadProjects() {
 
 }
 
+loadProjects();
+
+// =====================================
 // Open Project
+// =====================================
+
 window.openProject = async function(id) {
 
     localStorage.setItem("project_id", id);
@@ -200,79 +193,34 @@ window.openProject = async function(id) {
 
 };
 
+// =====================================
 // Delete Project
+// =====================================
+
 window.deleteProject = async function(id) {
 
     if (!confirm("Delete this project?")) return;
 
-    await supabase
-
+    const { error } = await supabase
         .from("projects")
-
         .delete()
-
         .eq("id", id);
+
+    if (error) {
+
+        alert(error.message);
+        return;
+
+    }
 
     loadProjects();
 
 };
 
-// Start
-loadProjects();
-
 // =====================================
-// Current Date
+// Dashboard Loaded
 // =====================================
 
-console.log("Dashboard Loaded Successfully 🚀");
+console.log("✅ Dashboard Loaded Successfully");
 
-// =====================================
-// Load Project History
-// =====================================
 
-async function loadProjects() {
-
-    const {
-        data,
-        error
-    } = await db
-        .from("projects")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-    if (error) {
-
-        console.log(error);
-        return;
-
-    }
-
-    const history = document.getElementById("projectHistory");
-
-    history.innerHTML = "";
-
-    data.forEach(project => {
-
-        history.innerHTML += `
-
-<div class="project-card">
-
-<h3>${project.project_name}</h3>
-
-<p>${project.project_type}</p>
-
-<span>
-
-${new Date(project.created_at).toLocaleDateString()}
-
-</span>
-
-</div>
-
-`;
-
-    });
-
-}
-
-loadProjects();

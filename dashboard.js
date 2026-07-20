@@ -106,7 +106,7 @@ cards.forEach((card, index) => {
 // Dashboard.js
 // =============================
 
-import { supabase } from "./auth.js";
+const supabase = window.db;
 
 const projectHistory = document.getElementById("projectHistory");
 

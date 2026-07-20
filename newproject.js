@@ -22,13 +22,7 @@ async function saveProject(project, aiResult) {
     const { error } = await db
         .from("projects")
         .insert({
-        if (error) {
-    alert(error.message);
-    console.log(error);
-} else {
-    alert("Project Saved Successfully");
-    }    
-
+        
             user_id: session.user.id,
 
             project_name: project.project_name,
